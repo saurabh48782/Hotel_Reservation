@@ -1,0 +1,43 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        # this is to allow !anystr ref in tavern tests
+        args: ['--unsafe']
+      - id: check-added-large-files
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [alembic==1.13.1,types-requests,types-PyYAML,types-pytz,types-python-dateutil,types-redis]
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+  - repo: https://github.com/google/yapf
+    rev: v0.40.2
+    hooks:
+      - id: yapf
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: env PYTHONPATH=. poetry run pylint
+        language: system
+        types: [python]
+        args:
+          [
+            "--score=n",
+            "--disable=missing-function-docstring,missing-module-docstring,missing-class-docstring,too-many-positional-arguments",
+            "--ignore-paths=tests,alembic,scripts,docs"
+          ]
