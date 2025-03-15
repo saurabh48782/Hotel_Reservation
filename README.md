@@ -7,6 +7,8 @@
 Prediction of cancellations of reservations at a Hotel.
 
 ## One-time development setup
+Dataset used can be downloaded from here: [Hotel Reservations Dataset](https://www.kaggle.com/datasets/ahsan81/hotel-reservations-classification-dataset)
+
 Install `pyenv`.
 
 ```
