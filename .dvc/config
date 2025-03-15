@@ -1,0 +1,4 @@
+[core]
+    remote = hotel_remote
+['remote "hotel_remote"']
+    url = gs://hotel_bucket48782/
