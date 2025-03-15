@@ -1,0 +1,9 @@
+schema: '2.0'
+stages:
+  fetch_data:
+    cmd: poetry run python hotel_reservation/src/data/fetch_data.py hotel_reservation/data/raw/raw_data.csv
+    outs:
+    - path: hotel_reservation/data/raw/raw_data.csv
+      hash: md5
+      md5: 922b55cf208d0549792548e5a3cff6f5
+      size: 3240604

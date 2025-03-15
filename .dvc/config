@@ -1,4 +1,5 @@
 [core]
     remote = hotel_remote
+    autostage = true
 ['remote "hotel_remote"']
     url = gs://hotel_bucket48782/

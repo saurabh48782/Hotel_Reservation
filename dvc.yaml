@@ -1,5 +1,5 @@
 stages:
   fetch_data:
-    cmd: poetry run python hotel_reservation/src/data/fetch_data.py hotel_reservation/data/raw
+    cmd: poetry run python hotel_reservation/src/data/fetch_data.py hotel_reservation/data/raw/raw_data.csv
     outs:
-    - hotel_reservation/data/raw
+    - hotel_reservation/data/raw/raw_data.csv

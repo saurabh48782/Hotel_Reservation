@@ -29,6 +29,8 @@ pandas = "^2.2.3"
 numpy = "^2.2.3"
 pylint = "^3.3.5"
 dvc = "^3.59.1"
+omegaconf = "^2.3.0"
+google-cloud-storage = "^3.1.0"
 
 [build-system]
 requires = ["poetry-core"]
