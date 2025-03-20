@@ -3,3 +3,17 @@ stages:
     cmd: poetry run python hotel_reservation/src/data/fetch_data.py hotel_reservation/data/raw/raw_data.csv
     outs:
     - hotel_reservation/data/raw/raw_data.csv
+
+  prepare_data:
+    cmd: python hotel_reservation/src/data/prepare.py hotel_reservation/data/raw/raw_data.csv
+      hotel_reservation/data/processed/
+    deps:
+    - hotel_reservation/data/raw/raw_data.csv
+    - hotel_reservation/src/data/prepare.py
+    params:
+    - split_criterion.seed
+    - split_criterion.train_split
+    - model_features.encode_features
+    outs:
+    - hotel_reservation/data/processed/train.csv
+    - hotel_reservation/data/processed/test.csv

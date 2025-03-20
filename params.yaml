@@ -1,0 +1,10 @@
+split_criterion:
+  train_split: "2018-11-01"
+  seed: 12
+
+model_features:
+  encode_features:
+    - type_of_meal_plan
+    - room_type_reserved
+    - market_segment_type
+    - arrival_quarter

@@ -17,8 +17,8 @@ stages:
       size: 3240604
     - path: hotel_reservation/src/data/prepare.py
       hash: md5
-      md5: fe1c7be918615e449a528aa1b8b0326f
-      size: 5001
+      md5: 02aa2f23c6deaa17decaf8ff06441c22
+      size: 6177
     params:
       params.yaml:
         model_features.encode_features:
