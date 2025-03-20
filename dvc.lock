@@ -7,3 +7,33 @@ stages:
       hash: md5
       md5: 922b55cf208d0549792548e5a3cff6f5
       size: 3240604
+  prepare_data:
+    cmd: python hotel_reservation/src/data/prepare.py hotel_reservation/data/raw/raw_data.csv
+      hotel_reservation/data/processed/
+    deps:
+    - path: hotel_reservation/data/raw/raw_data.csv
+      hash: md5
+      md5: 922b55cf208d0549792548e5a3cff6f5
+      size: 3240604
+    - path: hotel_reservation/src/data/prepare.py
+      hash: md5
+      md5: fe1c7be918615e449a528aa1b8b0326f
+      size: 5001
+    params:
+      params.yaml:
+        model_features.encode_features:
+        - type_of_meal_plan
+        - room_type_reserved
+        - market_segment_type
+        - arrival_quarter
+        split_criterion.seed: 12
+        split_criterion.train_split: '2018-11-01'
+    outs:
+    - path: hotel_reservation/data/processed/test.csv
+      hash: md5
+      md5: b87ebeb9708d66f8e7c76a5e235ba5c6
+      size: 78353
+    - path: hotel_reservation/data/processed/train.csv
+      hash: md5
+      md5: 9a433c9d1f4deaa03f60d164cd2602c5
+      size: 514074
