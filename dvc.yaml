@@ -17,3 +17,18 @@ stages:
     outs:
     - hotel_reservation/data/processed/train.csv
     - hotel_reservation/data/processed/test.csv
+
+  train:
+    cmd: python hotel_reservation/src/model/train.py hotel_reservation/data/processed/train.csv
+      hotel_reservation/models/model.joblib
+    deps:
+    - hotel_reservation/data/processed/train.csv
+    - hotel_reservation/src/model/train.py
+    outs:
+    - hotel_reservation/models/model.joblib
+
+  evaluate:
+    cmd: python hotel_reservation/src/model/evaluate.py hotel_reservation/data/processed/test.csv
+    deps:
+    - hotel_reservation/data/processed/test.csv
+    - hotel_reservation/src/model/evaluate.py

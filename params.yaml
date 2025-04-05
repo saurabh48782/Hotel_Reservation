@@ -8,3 +8,9 @@ model_features:
     - room_type_reserved
     - market_segment_type
     - arrival_quarter
+  random_state: 42
+  stopping_rounds: 50
+  eval_metric: auc
+
+hyperparameters:
+  trials: 5
