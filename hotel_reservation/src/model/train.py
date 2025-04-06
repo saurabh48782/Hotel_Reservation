@@ -10,6 +10,7 @@ import optuna
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import TimeSeriesSplit
 
+from dvclive import Live
 from hotel_reservation.src.logger import get_logger
 from hotel_reservation.utils import read_csv_files
 from hotel_reservation.utils.custom_exception import CustomException
@@ -79,8 +80,8 @@ def get_best_hyperparams(X_train, y_train):
 
         study.optimize(objective, n_trials=params['hyperparameters']['trials'])
 
-        logger.info(f"Best Params: {study.best_trial.params}")
-        logger.info(f"Best Score: {study.best_trial.value}")
+        logger.info("Best Params: %s", study.best_trial.params)
+        logger.info("Best Score: %s", study.best_trial.value)
         logger.info(">>>>>>>> Hyperparameter-tuning finished")
         return study
     except Exception as e:
@@ -101,8 +102,10 @@ def build_model(study, X_train, y_train):
 def save_model(model, save_path: str):
     try:
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        joblib.dump(model, os.path.join(save_path, "model.joblib"))
-        logger.info(f">>>>>>>> Model saved successfully at {save_path}")
+        full_path = os.path.join(save_path, "model.joblib")
+        joblib.dump(model, full_path)
+        logger.info(">>>>>>>> Model saved successfully at %s", full_path)
+        return full_path
 
     except Exception as e:
         logger.error("Error occured during saving the model")
@@ -111,33 +114,44 @@ def save_model(model, save_path: str):
 
 if __name__ == '__main__':
     try:
-        with mlflow.start_run():
-            logger.info(">>>>>>>> Model training started")
-            logger.info(">>>>>>>> MLflow experimentation  started")
+        mlflow.set_tracking_uri("file:mlruns")
+        mlflow.set_experiment("hotel-reservation-exp")
+        with mlflow.start_run() as run:
+            with open("mlruns/current_run_id.txt", "w") as f:
+                f.write(run.info.run_id)
+            with Live() as live:
+                logger.info(">>>>>>>> Model training started")
+                logger.info(">>>>>>>> MLflow experimentation  started")
 
-            logger.info(">>>>>>>> Tracking train dataset in mlflow")
-            mlflow.log_artifact(sys.argv[1], artifact_path='datasets')
+                logger.info(">>>>>>>> Tracking train dataset in mlflow")
+                mlflow.log_artifact(sys.argv[1], artifact_path='datasets')
 
-            logger.info(">>>>>>>> Reading train dataset")
-            train_df = read_csv_files(sys.argv[1])
+                logger.info(">>>>>>>> Reading train dataset")
+                train_df = read_csv_files(sys.argv[1])
 
-            X_train = train_df.drop(columns='booking_status')
-            y_train = train_df["booking_status"]
+                X_train = train_df.drop(columns='booking_status')
+                y_train = train_df["booking_status"]
 
-            logger.info(">>>>>>>> train dataset read successfully")
+                logger.info(">>>>>>>> train dataset read successfully")
 
-            study = get_best_hyperparams(X_train, y_train)
-            model = build_model(study, X_train, y_train)
+                study = get_best_hyperparams(X_train, y_train)
+                model = build_model(study, X_train, y_train)
 
-            logger.info(">>>>>>>> Tracking best model params in mlflow")
-            mlflow.log_params(model.get_params())
+                logger.info(
+                    ">>>>>>>> Tracking best model params in mlflow and dvc")
+                mlflow.log_params(model.get_params())
 
-            save_model(model, save_path=sys.argv[2])
+                for param_name, param_value in model.get_params().items():
+                    live.log_param(param_name, param_value)
 
-            logger.info(">>>>>>>> Tracking trained model in mlflow")
-            mlflow.log_artifact(sys.argv[2])
+                model_path = save_model(model, save_path=sys.argv[2])
 
-            logger.info(">>>>>>>> Model training finished")
+                logger.info(
+                    ">>>>>>>> Tracking trained model in mlflow and dvc")
+                mlflow.log_artifact(model_path, artifact_path='models')
+                live.log_artifact(model_path, type='model')
+
+                logger.info(">>>>>>>> Model training finished")
 
     except Exception as e:
         logger.error("Some error occurred during model training")

@@ -181,3 +181,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# MLflow logs
+mlruns/
+mlruns.db
+
+# DVCLive logs
+dvclive/
+
+# DVC cache (if not using external cache)
+.dvc/cache/

@@ -20,15 +20,33 @@ stages:
 
   train:
     cmd: python hotel_reservation/src/model/train.py hotel_reservation/data/processed/train.csv
-      hotel_reservation/models/model.joblib
+      hotel_reservation/models
     deps:
     - hotel_reservation/data/processed/train.csv
     - hotel_reservation/src/model/train.py
+    params:
+    - model_features.random_state
+    - model_features.stopping_rounds
+    - model_features.eval_metric
+    - hyperparameters.trials
     outs:
     - hotel_reservation/models/model.joblib
+    - mlruns/current_run_id.txt
 
   evaluate:
-    cmd: python hotel_reservation/src/model/evaluate.py hotel_reservation/data/processed/test.csv
+    cmd: python hotel_reservation/src/model/evaluate.py hotel_reservation/models/model.joblib
+      hotel_reservation/data/processed/test.csv
     deps:
     - hotel_reservation/data/processed/test.csv
     - hotel_reservation/src/model/evaluate.py
+    - hotel_reservation/models/model.joblib
+    - mlruns/current_run_id.txt
+artifacts:
+  model:
+    path: hotel_reservation/models/model.joblib
+    type: model
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step

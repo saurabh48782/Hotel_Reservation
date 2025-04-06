@@ -12,6 +12,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
+from dvclive import Live
 from hotel_reservation.src.logger import get_logger
 from hotel_reservation.utils import read_csv_files
 from hotel_reservation.utils.custom_exception import CustomException
@@ -28,13 +29,13 @@ def evaluate(model, X_test: pd.DataFrame, y_test: pd.DataFrame) -> Dict:
     f1 = f1_score(y_test, y_pred)
     auc_score = roc_auc_score(y_test, y_pred)
 
-    logger.info(f">>>>>>>> accuracy is: {accuracy}")
-    logger.info(f">>>>>>>> precision is: {precision}")
-    logger.info(f">>>>>>>> recall is: {recall}")
-    logger.info(f">>>>>>>> f1-score is: {f1}")
-    logger.info(f">>>>>>>> auc-score is: {auc_score}")
+    logger.info(">>>>>>>> accuracy is: %s", accuracy)
+    logger.info(">>>>>>>> precision is: %s", precision)
+    logger.info(">>>>>>>> recall is: %s", recall)
+    logger.info(">>>>>>>> f1-score is: %s", f1)
+    logger.info(">>>>>>>> auc-score is: %s", auc_score)
 
-    logger.info(f">>>>>>>> Model evaluation finished")
+    logger.info(">>>>>>>> Model evaluation finished")
 
     return {
         "accuracy": accuracy,
@@ -47,7 +48,11 @@ def evaluate(model, X_test: pd.DataFrame, y_test: pd.DataFrame) -> Dict:
 
 if __name__ == '__main__':
     try:
-        with mlflow.start_run():
+        mlflow.set_tracking_uri("file:mlruns")
+        mlflow.set_experiment("hotel-reservation-exp")
+        with open("mlruns/current_run_id.txt", "r") as f:
+            run_id = f.read().strip()
+        with mlflow.start_run(run_id=run_id):
             logger.info(">>>>>>>> Tracking test dataset in mlflow")
             mlflow.log_artifact(sys.argv[2], artifact_path='datasets')
 
@@ -63,6 +68,9 @@ if __name__ == '__main__':
             logger.info(
                 ">>>>>>>> Tracking evalution metrics on test set in mlflow")
             mlflow.log_metrics(metrics)
+            with Live() as live:
+                for metric_name, metric_value in metrics.items():
+                    live.log_metric(metric_name, metric_value)
 
     except Exception as e:
         logger.error("Some error occurred during model training")

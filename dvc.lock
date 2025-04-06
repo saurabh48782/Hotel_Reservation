@@ -37,3 +37,50 @@ stages:
       hash: md5
       md5: 9a433c9d1f4deaa03f60d164cd2602c5
       size: 514074
+  train:
+    cmd: python hotel_reservation/src/model/train.py hotel_reservation/data/processed/train.csv
+      hotel_reservation/models
+    deps:
+    - path: hotel_reservation/data/processed/train.csv
+      hash: md5
+      md5: 9a433c9d1f4deaa03f60d164cd2602c5
+      size: 514074
+    - path: hotel_reservation/src/model/train.py
+      hash: md5
+      md5: 20f4e35724b112a7f6430264aa2e06b4
+      size: 6219
+    params:
+      params.yaml:
+        hyperparameters.trials: 150
+        model_features.eval_metric: auc
+        model_features.random_state: 12
+        model_features.stopping_rounds: 50
+    outs:
+    - path: hotel_reservation/models/model.joblib
+      hash: md5
+      md5: 21816df5952ed9b0e8adb79439cc8cf0
+      size: 3148596
+    - path: mlruns/current_run_id.txt
+      hash: md5
+      md5: d1530d652bc6108f29b81b9434d0e53a
+      size: 32
+  evaluate:
+    cmd: python hotel_reservation/src/model/evaluate.py hotel_reservation/models/model.joblib
+      hotel_reservation/data/processed/test.csv
+    deps:
+    - path: hotel_reservation/data/processed/test.csv
+      hash: md5
+      md5: b87ebeb9708d66f8e7c76a5e235ba5c6
+      size: 78353
+    - path: hotel_reservation/models/model.joblib
+      hash: md5
+      md5: 21816df5952ed9b0e8adb79439cc8cf0
+      size: 3148596
+    - path: hotel_reservation/src/model/evaluate.py
+      hash: md5
+      md5: b28d0133ff0616ea9805942b814f2b43
+      size: 2515
+    - path: mlruns/current_run_id.txt
+      hash: md5
+      md5: d1530d652bc6108f29b81b9434d0e53a
+      size: 32
