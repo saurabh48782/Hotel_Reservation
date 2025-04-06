@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Hotel Reservation Cancellation Prediction</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://bootswatch.com/5/spacelab/bootstrap.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid p-5 bg-primary text-white text-center rounded-bottom">
+        <h1>Hotel Reservation Cancellation Prediction</h1>
+        <p class="lead">Predict if a hotel reservation will be canceled by the user</p>
+    </div>
+
+    <div class="container mt-5">
+        <form method="POST" action="/predict" class="row g-3 shadow-lg p-4 rounded bg-light">
+            <div class="col-md-6">
+                <label for="lead_time" class="form-label">Lead time</label>
+                <input type="number" id="lead_time" name="lead_time" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="avg_price_per_room" class="form-label">Avg. price per room</label>
+                <input type="number" step="0.01" id="avg_price_per_room" name="avg_price_per_room" class="form-control"
+                    required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="no_of_special_requests" class="form-label">No. of special requests</label>
+                <input type="number" id="no_of_special_requests" name="no_of_special_requests" class="form-control"
+                    required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="no_of_week_nights" class="form-label">No. of week nights</label>
+                <input type="number" id="no_of_week_nights" name="no_of_week_nights" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="no_of_weekend_nights" class="form-label">No. of weekend nights</label>
+                <input type="number" id="no_of_weekend_nights" name="no_of_weekend_nights" class="form-control"
+                    required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="no_of_adults" class="form-label">No. of adults</label>
+                <input type="number" id="no_of_adults" name="no_of_adults" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="market_segment_type_Offline" class="form-label">Market segment type</label>
+                <select id="market_segment_type_Offline" name="market_segment_type_Offline" class="form-select"
+                    required>
+                    <option value="1">Offline</option>
+                    <option value="0">Online</option>
+                </select>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Predict</button>
+            </div>
+        </form>
+
+        {% if prediction is not none %}
+        <div class="alert mt-4 {{ 'alert-success' if prediction == 1 else 'alert-danger' }}" role="alert">
+            {% if prediction == 0 %}
+            The customer is <strong>not going to cancel</strong> the reservation.
+            {% elif prediction == 1 %}
+            The customer is <strong>going to cancel</strong> the reservation.
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html>

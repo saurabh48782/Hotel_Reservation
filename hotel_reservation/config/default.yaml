@@ -1,4 +1,5 @@
 google_cloud_bucket:
   bucket_name : hotel_bucket48782
   file_name : hotel_reservations.csv
-  
+
+load_weights: True
